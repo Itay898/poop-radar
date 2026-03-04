@@ -408,6 +408,9 @@
     @keyframes pinPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.9); } }
     .loc-name { color: var(--text); font-weight: 700; }
     .loc-dist { font-size: 9px; color: var(--text-dim); }
+    .change-location-link { cursor: pointer; opacity: 0; margin-left: 4px; font-size: 10px; transition: opacity 0.3s; text-decoration: none; color: var(--accent); }
+    .location-bar:hover .change-location-link { opacity: 1; }
+    .change-location-link.visible { opacity: 1; }
 
     /* Manual chooser */
     .manual-chooser { display: none; margin-top: 12px; width: 100%; text-align: center; }
@@ -506,6 +509,7 @@
       <div class="location-bar" id="location_bar">
         <span class="loc-pin">📍</span>
         <span id="loc_text">מאתרים את הדוש הקרוב אליכם...</span>
+        <a href="#" id="change_location_link" class="change-location-link">✏️</a>
       </div>
 
       <div class="manual-chooser" id="manual_chooser">
@@ -521,11 +525,6 @@
       <button class="share-btn hidden" id="share_btn">
         <span>שיתוף</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-      </button>
-
-      <button class="share-btn hidden" id="change_location_btn">
-        <span>שנה מיקום</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 2.2"/></svg>
       </button>
 
       <div class="divider"></div>
@@ -772,7 +771,7 @@
           el("t_reco").style.display = "";
           el("level_pill").classList.add("visible");
           if (navigator.share) el("share_btn").classList.remove("hidden");
-          el("change_location_btn").classList.remove("hidden");
+          el("change_location_link").classList.add("visible");
         }
 
         showAlertBanner({ isActiveNow: result.isActiveNow });
@@ -871,7 +870,8 @@
     });
 
     // Change Location Action
-    el("change_location_btn").addEventListener("click", () => {
+    el("change_location_link").addEventListener("click", (e) => {
+      e.preventDefault();
       showManualChooser();
     });
 
