@@ -298,23 +298,63 @@
     /* Loading state */
     .gauge-wrap.loading { filter: none; }
     .gauge-wrap.loading .score-row, .gauge-wrap.loading .score-label { display: none; }
-    
+
+    /* Ripple rings (shared by permission & scanning) */
+    .gauge-wrap.loading .score-display::before,
+    .gauge-wrap.loading .score-display::after {
+      content: ''; position: absolute; border-radius: 50%; pointer-events: none;
+    }
+    .gauge-wrap.loading .score-display::before {
+      width: 100px; height: 100px; border: 2px solid; opacity: 0;
+      animation: rippleOut 2s ease-out infinite;
+    }
+    .gauge-wrap.loading .score-display::after {
+      width: 80px; height: 80px; border: 1.5px solid; opacity: 0;
+      animation: rippleOut 2s ease-out 0.6s infinite;
+    }
+
+    /* Loading icon (using a pseudo on .gauge-wrap itself) */
+    .gauge-wrap.loading::after {
+      content: ''; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 36px; z-index: 2;
+    }
+
     /* 1. Permission Wait State */
-    .gauge-wrap.loading.permission .progress { stroke: var(--yellow); stroke-dashoffset: 0; opacity: 0.3; animation: pulseOpacity 1.5s ease-in-out infinite; }
-    .gauge-wrap.loading.permission .score-display::after { content: '📍'; display: flex; align-items: center; justify-content: center; font-size: 32px; width: 60px; height: 60px; border-radius: 50%; background: rgba(251, 191, 36, 0.1); animation: bounce 1s infinite alternate; }
+    .gauge-wrap.loading.permission .progress {
+      stroke: var(--yellow); stroke-dashoffset: 0; opacity: 0.15;
+      animation: pulseRing 2s ease-in-out infinite;
+    }
+    .gauge-wrap.loading.permission .score-display::before,
+    .gauge-wrap.loading.permission .score-display::after { border-color: var(--yellow); }
+    .gauge-wrap.loading.permission::after { content: '📍'; animation: breathe 2s ease-in-out infinite; }
 
     /* 2. Scanning State */
-    .gauge-wrap.loading.scanning .progress { stroke: var(--accent); stroke-dashoffset: 400; animation: radarSpin 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-    .gauge-wrap.loading.scanning .score-display::after { content: '🚿'; display: flex; align-items: center; justify-content: center; font-size: 32px; width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.05); animation: float 2s ease-in-out infinite; }
+    .gauge-wrap.loading.scanning .progress {
+      stroke: var(--accent); stroke-dashoffset: 0; opacity: 0.15;
+      animation: pulseRing 1.5s ease-in-out infinite;
+    }
+    .gauge-wrap.loading.scanning .score-display::before,
+    .gauge-wrap.loading.scanning .score-display::after { border-color: var(--accent); }
+    .gauge-wrap.loading.scanning::after { content: '🚿'; animation: breathe 1.5s ease-in-out infinite; }
 
     /* 3. Error State */
     .gauge-wrap.loading.error .progress { stroke: var(--red); stroke-dashoffset: 0; opacity: 0.4; animation: none; }
-    .gauge-wrap.loading.error .score-display::after { content: '🚫'; display: flex; align-items: center; justify-content: center; font-size: 32px; width: 60px; height: 60px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); animation: shake 0.5s ease-in-out; }
+    .gauge-wrap.loading.error .score-display::before,
+    .gauge-wrap.loading.error .score-display::after { animation: none; opacity: 0; }
+    .gauge-wrap.loading.error::after { content: '🚫'; animation: shake 0.5s ease-in-out; }
 
-    @keyframes radarSpin { to { transform: rotate(-450deg); } }
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    @keyframes pulseOpacity { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.6; } }
-    @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+    @keyframes rippleOut {
+      0% { transform: scale(0.6); opacity: 0.6; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+    @keyframes pulseRing {
+      0%, 100% { opacity: 0.1; stroke-width: 8; }
+      50% { opacity: 0.4; stroke-width: 12; }
+    }
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
     @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
     /* Divider */
