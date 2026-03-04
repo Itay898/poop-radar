@@ -398,16 +398,16 @@
     
     .location-bar {
       margin-top: 16px;
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 10px 20px; font-size: 13px; color: var(--text-muted);
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 6px 12px; font-size: 11px; color: var(--text-muted);
       background: rgba(0,0,0,0.2);
       border-radius: 100px;
       border: 1px solid rgba(255,255,255,0.05);
     }
-    .loc-pin { animation: pinPulse 2s ease-in-out infinite; font-size: 16px; }
+    .loc-pin { animation: pinPulse 2s ease-in-out infinite; font-size: 14px; }
     @keyframes pinPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.9); } }
     .loc-name { color: var(--text); font-weight: 700; }
-    .loc-dist { font-size: 12px; color: var(--text-dim); }
+    .loc-dist { font-size: 10px; color: var(--text-dim); }
 
     /* Manual chooser */
     .manual-chooser { display: none; margin-top: 12px; width: 100%; text-align: center; }
@@ -418,15 +418,15 @@
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.1);
       color: var(--text-muted);
-      padding: 8px 20px;
+      padding: 12px 28px;
       border-radius: 100px;
       font-family: inherit;
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       transition: all 0.2s;
     }
     .share-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
