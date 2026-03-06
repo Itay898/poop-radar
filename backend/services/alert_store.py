@@ -203,7 +203,21 @@ class AlertStore:
                     user_alert_ids.add(a["id"])
                     user_timestamps.append(a["timestamp"])
 
-        alert_count = len(user_alert_ids)
+        # Deduplicate: RocketAlert stores one record per city per broadcast,
+        # so the same ORef event yields multiple records with identical (or nearly
+        # identical) timestamps. Cluster within 5 minutes → count unique events.
+        EVENT_DEDUP_SEC = 300
+        unique_event_timestamps: list[float] = []
+        if user_timestamps:
+            user_timestamps.sort()
+            last_event_ts = user_timestamps[0]
+            unique_event_timestamps.append(last_event_ts)
+            for ts in user_timestamps[1:]:
+                if ts - last_event_ts > EVENT_DEDUP_SEC:
+                    unique_event_timestamps.append(ts)
+                    last_event_ts = ts
+
+        alert_count = len(unique_event_timestamps)
 
         # Shelter time using Mako/Tzofar formula:
         # 17 min for a standalone alert, 27 min from the last alert in a salvo.
@@ -212,19 +226,16 @@ class AlertStore:
         CONSECUTIVE_SEC = 27 * 60
         SALVO_GAP_SEC = 30 * 60
         shelter_time_sec = 0
-        if user_timestamps:
-            user_timestamps.sort()
-            salvo_start = user_timestamps[0]
-            salvo_last = user_timestamps[0]
-            for ts in user_timestamps[1:]:
+        if unique_event_timestamps:
+            salvo_start = unique_event_timestamps[0]
+            salvo_last = unique_event_timestamps[0]
+            for ts in unique_event_timestamps[1:]:
                 if ts - salvo_last <= SALVO_GAP_SEC:
-                    salvo_last = ts  # extend salvo
+                    salvo_last = ts
                 else:
-                    # close previous salvo
                     shelter_time_sec += (salvo_last - salvo_start) + CONSECUTIVE_SEC if salvo_last > salvo_start else SINGLE_SEC
                     salvo_start = ts
                     salvo_last = ts
-            # close final salvo
             shelter_time_sec += (salvo_last - salvo_start) + CONSECUTIVE_SEC if salvo_last > salvo_start else SINGLE_SEC
 
         sorted_cities = sorted(city_counts.items(), key=lambda x: x[1], reverse=True)
