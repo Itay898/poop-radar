@@ -175,17 +175,18 @@ class AlertStore:
     def get_stats_for_areas(self, areas: list[str], window_days: float = 30) -> dict:
         """Return alert count, city ranking, and total cities for the given areas."""
         cutoff = time.time() - window_days * 86400
-        # Expand with regions (e.g. "גבעתיים" → also "דן")
-        areas_set = self.expand_with_regions(set(areas))
-        # Also extract city-level prefixes: "רמת גן - מערב" → "רמת גן"
-        # because RocketAlert stores bare city names like "רמת גן"
-        city_prefixes = {a.split(" - ")[0] for a in areas_set}
+        exact_areas = set(areas)
+        # RocketAlert stores bare city names ("רמת גן") while area_coords uses
+        # sub-area names ("רמת גן - מערב"). Match both exact and bare-city forms,
+        # but NOT region names or other sub-areas of the same city.
+        bare_cities = {a.split(" - ")[0] for a in exact_areas}
 
         def _alert_matches(alert_areas: list[str]) -> bool:
             for a in alert_areas:
-                if a in areas_set:
+                if a in exact_areas:
                     return True
-                if a.split(" - ")[0] in city_prefixes:
+                # Bare city name with no sub-area suffix (RocketAlert format)
+                if " - " not in a and a in bare_cities:
                     return True
             return False
 
@@ -241,7 +242,7 @@ class AlertStore:
         sorted_cities = sorted(city_counts.items(), key=lambda x: x[1], reverse=True)
         rank = None
         for i, (city, _) in enumerate(sorted_cities):
-            if city in areas_set or city.split(" - ")[0] in city_prefixes:
+            if city in exact_areas or (" - " not in city and city in bare_cities):
                 rank = i + 1
                 break
 
