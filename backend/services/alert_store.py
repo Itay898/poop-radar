@@ -172,7 +172,7 @@ class AlertStore:
                 freq[dt.weekday()] += 1
         return freq
 
-    def get_stats_for_areas(self, areas: list[str], window_days: int = 30) -> dict:
+    def get_stats_for_areas(self, areas: list[str], window_days: float = 30) -> dict:
         """Return alert count, city ranking, and total cities for the given areas."""
         cutoff = time.time() - window_days * 86400
         # Expand with regions (e.g. "גבעתיים" → also "דן")

@@ -753,7 +753,7 @@
         <div class="stat-card">
           <div class="stat-icon">🚨</div>
           <div class="stat-value" id="stat_alerts">-</div>
-          <div class="stat-label">אזעקות ב-30 יום</div>
+          <div class="stat-label">אזעקות מ-28.2</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">⏱</div>
@@ -1032,7 +1032,7 @@
       if (!state.areas.length) return;
       try {
         const loc = encodeURIComponent(state.areas.join("|"));
-        const data = await fetch(`${API}/stats?location=${loc}&window_days=30`).then(r => r.json());
+        const data = await fetch(`${API}/stats?location=${loc}&since_date=2026-02-28`).then(r => r.json());
         el("stat_alerts").textContent = data.alert_count.toLocaleString("he-IL");
         el("stat_shelter").textContent = Math.round(data.shelter_time_sec / 60).toLocaleString("he-IL");
         if (data.rank) {
