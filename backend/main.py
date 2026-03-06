@@ -4,10 +4,11 @@ import logging
 import time
 from pathlib import Path
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, HTMLResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from .services.oref_poller import poll_loop
 from .services.alert_store import store
@@ -34,6 +35,19 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Shower Radar API", lifespan=lifespan)
+
+class StripRangeMiddleware(BaseHTTPMiddleware):
+    """Strip Range header on HTML page requests to prevent 206 responses."""
+    async def dispatch(self, request: Request, call_next):
+        if request.url.path == "/" and "range" in request.headers:
+            # Remove Range header so no handler/proxy can return 206
+            mutable = dict(request.scope)
+            headers = [(k, v) for k, v in request.scope["headers"] if k != b"range"]
+            mutable["headers"] = headers
+            request._scope = mutable
+        return await call_next(request)
+
+app.add_middleware(StripRangeMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
