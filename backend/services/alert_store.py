@@ -191,6 +191,7 @@ class AlertStore:
 
         city_counts: dict[str, int] = {}
         user_alert_ids: set[str] = set()
+        user_timestamps: list[float] = []
 
         for a in self._history:
             if a["timestamp"] < cutoff:
@@ -198,9 +199,34 @@ class AlertStore:
             for area in a["areas"]:
                 city_counts[area] = city_counts.get(area, 0) + 1
             if _alert_matches(a["areas"]):
-                user_alert_ids.add(a["id"])
+                if a["id"] not in user_alert_ids:
+                    user_alert_ids.add(a["id"])
+                    user_timestamps.append(a["timestamp"])
 
         alert_count = len(user_alert_ids)
+
+        # Shelter time using Mako/Tzofar formula:
+        # 17 min for a standalone alert, 27 min from the last alert in a salvo.
+        # Salvo gap threshold: 30 minutes.
+        SINGLE_SEC = 17 * 60
+        CONSECUTIVE_SEC = 27 * 60
+        SALVO_GAP_SEC = 30 * 60
+        shelter_time_sec = 0
+        if user_timestamps:
+            user_timestamps.sort()
+            salvo_start = user_timestamps[0]
+            salvo_last = user_timestamps[0]
+            for ts in user_timestamps[1:]:
+                if ts - salvo_last <= SALVO_GAP_SEC:
+                    salvo_last = ts  # extend salvo
+                else:
+                    # close previous salvo
+                    shelter_time_sec += (salvo_last - salvo_start) + CONSECUTIVE_SEC if salvo_last > salvo_start else SINGLE_SEC
+                    salvo_start = ts
+                    salvo_last = ts
+            # close final salvo
+            shelter_time_sec += (salvo_last - salvo_start) + CONSECUTIVE_SEC if salvo_last > salvo_start else SINGLE_SEC
+
         sorted_cities = sorted(city_counts.items(), key=lambda x: x[1], reverse=True)
         rank = None
         for i, (city, _) in enumerate(sorted_cities):
@@ -210,6 +236,7 @@ class AlertStore:
 
         return {
             "alert_count": alert_count,
+            "shelter_time_sec": int(shelter_time_sec),
             "rank": rank,
             "total_cities": len(city_counts),
             "window_days": window_days,
