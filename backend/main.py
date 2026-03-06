@@ -42,6 +42,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 app.include_router(predict.router, prefix="/api")
 app.include_router(locations.router, prefix="/api")
 app.include_router(alerts.router, prefix="/api")
@@ -88,8 +89,7 @@ async def health():
 # --- Serve frontend ---
 @app.get("/")
 async def serve_index():
-    content = (FRONTEND_DIR / "index.html").read_text(encoding="utf-8")
-    return HTMLResponse(content=content, status_code=200)
+    return FileResponse(FRONTEND_DIR / "index.html")
 
 
 # Static assets (og-image.png, etc.)
