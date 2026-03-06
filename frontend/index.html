@@ -236,15 +236,38 @@
     .reco-headline { font-weight: 800; }
     .reco-detail { font-weight: 400; color: var(--text-muted); font-size: 16px; }
 
-    /* Stats Strip */
-    .stats-row { display: flex; gap: 8px; margin: 12px 0 4px; width: 100%; }
-    .stat-card {
-      flex: 1; background: var(--glass); border: 1px solid var(--border);
-      border-radius: 14px; padding: 12px 6px 10px;
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
+    /* Location Card (unified location + stats) */
+    .loc-card {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 12px 0 4px;
     }
-    .stat-icon { font-size: 16px; line-height: 1; }
-    .stat-value { font-size: 20px; font-weight: 800; color: var(--text); line-height: 1.1; }
+    .loc-card-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; gap: 8px;
+      font-size: 13px; color: var(--text-muted);
+    }
+    .loc-card-location { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+    .loc-pin { font-size: 14px; flex-shrink: 0; }
+    .loc-name { color: var(--text); font-weight: 700; }
+    .loc-dist { font-size: 12px; color: var(--text-dim); }
+    .loc-dot { color: rgba(255,255,255,0.25); margin: 0 2px; flex-shrink: 0; }
+    .change-location-link {
+      cursor: pointer; font-size: 12px; font-weight: 600;
+      text-decoration: none; color: var(--accent);
+      white-space: nowrap; flex-shrink: 0;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .change-location-link.visible { opacity: 1; pointer-events: auto; }
+    .change-location-link:hover { text-decoration: underline; }
+    .loc-card-divider { height: 1px; background: rgba(255,255,255,0.1); }
+    .loc-card-stats { display: flex; justify-content: space-around; padding: 12px 4px 14px; }
+    .stat-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 0 4px; }
+    .stat-icon { font-size: 15px; line-height: 1; }
+    .stat-value { font-size: 18px; font-weight: 800; color: var(--text); line-height: 1.2; }
     .stat-label { font-size: 10px; color: var(--text-dim); text-align: center; line-height: 1.3; }
 
     /* Gauge Container */
@@ -402,39 +425,6 @@
     .rf-explain { font-size: 12px; color: var(--text-dim); line-height: 1.5; padding-right: 8px; border-right: 2px solid rgba(255,255,255,0.1); }
     .rf-sum { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 14px; font-weight: 800; color: var(--accent); direction: ltr; }
     
-    .location-bar {
-      margin-top: 16px;
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 8px 14px; font-size: 13px; color: var(--text-muted);
-      background: rgba(255,255,255,0.05);
-      border-radius: 100px;
-      border: 1px solid rgba(255,255,255,0.1);
-      flex-wrap: wrap;
-      max-width: 100%;
-    }
-    .loc-pin { font-size: 14px; }
-    .loc-name { color: var(--text); font-weight: 700; }
-    .loc-dist { font-size: 12px; color: var(--text-dim); }
-    .loc-dot { color: rgba(255,255,255,0.25); margin: 0 2px; }
-    .loc-sep { color: rgba(255,255,255,0.2); }
-    .change-location-link {
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 700;
-      text-decoration: none;
-      color: var(--accent);
-      background: rgba(0,200,150,0.15);
-      border: 1.5px solid rgba(0,200,150,0.4);
-      border-radius: 100px;
-      padding: 7px 14px;
-      transition: background 0.2s;
-      white-space: nowrap;
-      display: none;
-      min-height: 36px;
-      align-items: center;
-    }
-    .change-location-link.visible { display: inline-flex; }
-    .change-location-link:hover, .change-location-link:active { background: rgba(0,200,150,0.28); }
 
     /* Manual chooser */
     .manual-chooser {
@@ -749,29 +739,33 @@
 
       <div class="reco-text" id="t_reco" style="display:none;"></div>
 
-      <div class="stats-row" id="stats_row" style="display:none">
-        <div class="stat-card">
-          <div class="stat-icon">🚨</div>
-          <div class="stat-value" id="stat_alerts">-</div>
-          <div class="stat-label">אזעקות מתחילת שאגת הארי</div>
+      <div class="loc-card" id="loc_card" style="display:none">
+        <div class="loc-card-top">
+          <div class="loc-card-location">
+            <div class="ticker-wrap hidden" id="ticker_wrap"><div class="ticker" id="ticker">מכיילים את הרדאר אל מול זרם המים...</div></div>
+            <span class="loc-pin" id="loc_pin" style="display:none">📍</span>
+            <span id="loc_text"></span>
+          </div>
+          <a href="#" id="change_location_link" class="change-location-link">שנה מיקום</a>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon">⏱</div>
-          <div class="stat-value" id="stat_shelter">-</div>
-          <div class="stat-label">דקות בממ"ד</div>
+        <div class="loc-card-divider"></div>
+        <div class="loc-card-stats" id="stats_row">
+          <div class="stat-item">
+            <div class="stat-icon">🚨</div>
+            <div class="stat-value" id="stat_alerts">-</div>
+            <div class="stat-label">אזעקות מתחילת שאגת הארי</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">⏱</div>
+            <div class="stat-value" id="stat_shelter">-</div>
+            <div class="stat-label">דקות בממ"ד</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-value" id="stat_rank">-</div>
+            <div class="stat-label" id="stat_rank_label">דירוג</div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon">🏆</div>
-          <div class="stat-value" id="stat_rank">-</div>
-          <div class="stat-label" id="stat_rank_label">דירוג</div>
-        </div>
-      </div>
-
-      <div class="location-bar" id="location_bar" style="display:none">
-        <div class="ticker-wrap hidden" id="ticker_wrap"><div class="ticker" id="ticker">מכיילים את הרדאר אל מול זרם המים...</div></div>
-        <span class="loc-pin" id="loc_pin" style="display:none">📍</span>
-        <span id="loc_text"></span>
-        <a href="#" id="change_location_link" class="change-location-link">שנה מיקום</a>
       </div>
 
       <div class="manual-chooser" id="manual_chooser">
@@ -1041,7 +1035,6 @@
         } else {
           el("stat_rank").textContent = "-";
         }
-        el("stats_row").style.display = "";
       } catch (e) {
         console.warn("Stats fetch failed:", e);
       }
@@ -1435,7 +1428,7 @@
     function dismissWelcome() {
       el('welcome_screen').style.display = 'none';
       document.querySelector('.gauge-wrap').style.display = '';
-      el('location_bar').style.display = '';
+      el('loc_card').style.display = '';
     }
 
     el('welcome_auto_btn').addEventListener('click', () => {
