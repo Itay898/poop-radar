@@ -835,7 +835,7 @@
 
   <script>
     const state = {
-      areas: [], etaSec: 25, locationReady: false,
+      areas: [], selectedCity: null, etaSec: 25, locationReady: false,
       lastFetchOk: null, lastUpdateTime: null,
       activeAlert: false, sirenPlaying: false, wakeLock: null,
       notificationPermission: Notification.permission || "default",
@@ -1029,9 +1029,9 @@
 
     // --- City Stats ---
     async function updateStats() {
-      if (!state.areas.length) return;
+      if (!state.selectedCity) return;
       try {
-        const loc = encodeURIComponent(state.areas.join("|"));
+        const loc = encodeURIComponent(state.selectedCity);
         const data = await fetch(`${API}/stats?location=${loc}&since_date=2026-02-28`).then(r => r.json());
         el("stat_alerts").textContent = data.alert_count.toLocaleString("he-IL");
         el("stat_shelter").textContent = Math.round(data.shelter_time_sec / 60).toLocaleString("he-IL");
@@ -1270,6 +1270,7 @@
             const data = await resp.json();
             if (data.areas?.length) {
               state.areas = data.areas.slice(0, 5);
+              state.selectedCity = data.nearest.name;
               state.locationReady = true;
               if (data.migun_time != null) state.etaSec = data.migun_time;
               const n = data.nearest;
@@ -1355,6 +1356,7 @@
 
       async function selectManualArea(name) {
         state.areas = [name];
+        state.selectedCity = name;
         state.locationReady = true;
         hideManualChooser();
         el('manual_fallback_btn').style.display = 'none';
