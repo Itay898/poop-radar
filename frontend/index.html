@@ -759,7 +759,7 @@
           <div class="stat-item">
             <div class="stat-icon">⏱</div>
             <div class="stat-value" id="stat_shelter">-</div>
-            <div class="stat-label">דקות בממ"ד</div>
+            <div class="stat-label" id="stat_shelter_label">דקות בממ"ד</div>
           </div>
           <div class="stat-item">
             <div class="stat-icon">🏆</div>
@@ -1029,7 +1029,13 @@
         const loc = encodeURIComponent(state.selectedCity);
         const data = await fetch(`${API}/stats?location=${loc}&since_date=2026-02-28`).then(r => r.json());
         el("stat_alerts").textContent = data.alert_count.toLocaleString("he-IL");
-        el("stat_shelter").textContent = Math.round(data.shelter_time_sec / 60).toLocaleString("he-IL");
+        const totalMin = Math.round(data.shelter_time_sec / 60);
+        const shelterHours = Math.floor(totalMin / 60);
+        const shelterMins = totalMin % 60;
+        el("stat_shelter").textContent = shelterHours > 0
+          ? String(shelterHours) + ':' + String(shelterMins).padStart(2, '0')
+          : String(shelterMins);
+        el("stat_shelter_label").textContent = shelterHours > 0 ? 'שעות בממ"ד' : 'דקות בממ"ד';
         if (data.rank) {
           el("stat_rank").textContent = `#${data.rank}`;
           el("stat_rank_label").textContent = `מתוך ${data.total_cities.toLocaleString("he-IL")} ערים`;

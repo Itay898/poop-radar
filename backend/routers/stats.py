@@ -30,12 +30,18 @@ async def _fetch_mako_stats(city: str) -> dict | None:
         if not match:
             return None
         ctx = json.loads(match.group(1))
-        city_data = ctx.get("initialStats", {}).get("Iran2026", {}).get(city)
+        all_cities = ctx.get("initialStats", {}).get("Iran2026", {})
+        city_data = all_cities.get(city)
         if not city_data or len(city_data) < 2:
             return None
+        # Compute rank among all cities sorted by shelter time descending (same as Mako)
+        sorted_cities = sorted(all_cities.items(), key=lambda x: x[1][0] if x[1] else 0, reverse=True)
+        rank = next((i + 1 for i, (c, _) in enumerate(sorted_cities) if c == city), None)
         result = {
             "alert_count": int(city_data[1]),
             "shelter_time_sec": int(city_data[0]) // 1000,
+            "rank": rank,
+            "total_cities": len(all_cities),
         }
         _mako_cache[city] = result
         return result
@@ -68,11 +74,6 @@ async def get_stats(
     if since_date == "2026-02-28" and areas:
         mako = await _fetch_mako_stats(areas[0])
         if mako:
-            return {
-                **mako,
-                "rank": our_stats["rank"],
-                "total_cities": our_stats["total_cities"],
-                "window_days": since_days,
-            }
+            return {**mako, "window_days": since_days}
 
     return our_stats
