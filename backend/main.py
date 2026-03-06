@@ -89,7 +89,10 @@ async def health():
 # --- Serve frontend ---
 @app.get("/")
 async def serve_index():
-    return FileResponse(FRONTEND_DIR / "index.html")
+    return FileResponse(
+        FRONTEND_DIR / "index.html",
+        headers={"Cache-Control": "no-cache, no-store, must-revalidate"},
+    )
 
 
 # Static assets (og-image.png, etc.)
