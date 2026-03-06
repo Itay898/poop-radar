@@ -15,12 +15,7 @@ async def get_stats(
     areas = [a.strip() for a in location.split("|") if a.strip()]
     stats = store.get_stats_for_areas(areas, window_days)
 
-    coords = _load_coords()
-    migun_time = 90
-    for area in areas:
-        if area in coords:
-            migun_time = coords[area].get("migun_time", 90)
-            break
-
-    stats["shelter_time_sec"] = stats["alert_count"] * migun_time
+    # 10 minutes per alert = Home Front Command minimum shelter stay
+    SHELTER_SECONDS_PER_ALERT = 600
+    stats["shelter_time_sec"] = stats["alert_count"] * SHELTER_SECONDS_PER_ALERT
     return stats

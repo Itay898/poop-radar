@@ -175,7 +175,20 @@ class AlertStore:
     def get_stats_for_areas(self, areas: list[str], window_days: int = 30) -> dict:
         """Return alert count, city ranking, and total cities for the given areas."""
         cutoff = time.time() - window_days * 86400
-        areas_set = set(areas)
+        # Expand with regions (e.g. "גבעתיים" → also "דן")
+        areas_set = self.expand_with_regions(set(areas))
+        # Also extract city-level prefixes: "רמת גן - מערב" → "רמת גן"
+        # because RocketAlert stores bare city names like "רמת גן"
+        city_prefixes = {a.split(" - ")[0] for a in areas_set}
+
+        def _alert_matches(alert_areas: list[str]) -> bool:
+            for a in alert_areas:
+                if a in areas_set:
+                    return True
+                if a.split(" - ")[0] in city_prefixes:
+                    return True
+            return False
+
         city_counts: dict[str, int] = {}
         user_alert_ids: set[str] = set()
 
@@ -184,14 +197,14 @@ class AlertStore:
                 continue
             for area in a["areas"]:
                 city_counts[area] = city_counts.get(area, 0) + 1
-            if areas_set & set(a["areas"]):
+            if _alert_matches(a["areas"]):
                 user_alert_ids.add(a["id"])
 
         alert_count = len(user_alert_ids)
         sorted_cities = sorted(city_counts.items(), key=lambda x: x[1], reverse=True)
         rank = None
         for i, (city, _) in enumerate(sorted_cities):
-            if city in areas_set:
+            if city in areas_set or city.split(" - ")[0] in city_prefixes:
                 rank = i + 1
                 break
 
