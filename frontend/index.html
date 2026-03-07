@@ -818,7 +818,7 @@
       areas: [], selectedCity: null, etaSec: 25, locationReady: false,
       lastFetchOk: null, lastUpdateTime: null,
       activeAlert: false, sirenPlaying: false, wakeLock: null,
-      notificationPermission: Notification.permission || "default",
+      notificationPermission: ("Notification" in window) ? Notification.permission : "default",
       shelterCountdownInterval: null,
       updateDashboardInterval: null,
       riskOpen: false,
