@@ -127,24 +127,6 @@
       flex-direction: column;
     }
 
-    /* Header */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      text-align: center;
-      padding: 10px 16px;
-    }
-
-    .brand { display: inline-block; }
-    .brand h1 {
-      font-size: 17px;
-      font-weight: 800;
-      color: var(--text);
-      letter-spacing: -0.3px;
-      line-height: 1;
-    }
-
     /* Ticker Container */
     .ticker-wrap { display: block; text-align: center; width: 100%; }
     .ticker {
@@ -234,9 +216,8 @@
       -webkit-tap-highlight-color: transparent;
     }
     .shower-opt.active { background: var(--accent); color: var(--bg); }
-    .shower-opt-icon { font-size: 16px; }
-    .shower-opt-label { font-size: 12px; font-weight: 700; line-height: 1.2; }
-    .shower-opt-sub { font-size: 10px; opacity: 0.7; }
+    .shower-opt-label { font-size: 15px; font-weight: 700; line-height: 1.2; }
+    .shower-opt-sub { font-size: 12px; opacity: 0.7; }
 
     /* Recommendation */
     .reco-text {
@@ -686,19 +667,13 @@
       .gauge-wrap { width: 160px; height: 160px; margin: 14px auto; }
       .score-num { font-size: 44px; }
       .reco-text { font-size: 15px; margin: 10px 0 6px; }
-      header { margin-bottom: 12px; }
+
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <header>
-      <div class="brand">
-        <h1>🚿 סיבון העורף <span style="font-weight:400">· אפשר להתקלח? בדקו וגלו!</span></h1>
-      </div>
-    </header>
-
     <div class="alert-banner" id="alert_banner">
       <h3>צבע אדום באזורך!</h3>
       <p id="alert_banner_text">כניסה למרחב מוגן עכשיו!</p>
@@ -735,18 +710,15 @@
 
       <div class="shower-selector" id="shower_selector" style="display:none">
         <button class="shower-opt" data-duration="5">
-          <span class="shower-opt-icon">⚡</span>
-          <span class="shower-opt-label">זריזה</span>
+          <span class="shower-opt-label">מטכ״לית</span>
           <span class="shower-opt-sub">5 דק׳</span>
         </button>
         <button class="shower-opt active" data-duration="10">
-          <span class="shower-opt-icon">🚿</span>
           <span class="shower-opt-label">רגילה</span>
           <span class="shower-opt-sub">10 דק׳</span>
         </button>
         <button class="shower-opt" data-duration="20">
-          <span class="shower-opt-icon">🧴</span>
-          <span class="shower-opt-label">יסודית</span>
+          <span class="shower-opt-label">Everything Shower</span>
           <span class="shower-opt-sub">20 דק׳</span>
         </button>
       </div>
