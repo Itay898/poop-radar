@@ -141,6 +141,15 @@
       line-height: 1;
     }
 
+    /* Geo Message (above gauge) */
+    .geo-message {
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-dim);
+      padding: 0 12px 8px;
+    }
+
     /* Ticker Container */
     .ticker-wrap { display: block; text-align: center; width: 100%; }
     .ticker {
@@ -702,6 +711,8 @@
 
     <main class="card" id="main_card">
 
+      <div class="geo-message" id="geo_message" style="display:none"></div>
+
       <div class="gauge-wrap loading scanning">
         <svg class="gauge" viewBox="0 0 200 200">
           <circle class="track" cx="100" cy="100" r="90"></circle>
@@ -1206,9 +1217,9 @@
 
       if (!("geolocation" in navigator)) {
         stopTicker();
-        el("ticker_wrap").classList.remove("hidden");
-        el("ticker").textContent = "הדפדפן לא תומך באיתור מיקום";
         gaugeWrap.className = "gauge-wrap loading error";
+        el("geo_message").textContent = "כדי להעריך את הסיכוי שתתפוס אתכם אזעקה באמצע המקלחת אנחנו צריכים לדעת איפה אתם. אנא בחרו אזור ידנית.";
+        el("geo_message").style.display = "";
         showManualFallback();
         return;
       }
@@ -1234,6 +1245,7 @@
 
       async function onGeoSuccess(pos) {
         clearTimeout(geoTimeout);
+        el("geo_message").style.display = "none";
         if (!hasPermission) {
           gaugeWrap.className = "gauge-wrap loading scanning";
           el("ticker").style.color = "var(--text-dim)";
@@ -1284,13 +1296,14 @@
       function onGeoFinalError(err) {
         clearTimeout(geoTimeout);
         stopTicker();
-        const wrap = el("ticker_wrap");
-        const ticker = el("ticker");
         gaugeWrap.className = "gauge-wrap loading error";
-        wrap.classList.remove("hidden");
-        const msg = err.code === 1 ? "בלי מיקום, איך נדע מתי להוציא אתכם מהמקלחת? נא לאשר גישה." : "משהו השתבש עם הרדאר, כדאי לרענן את הדף.";
-        ticker.textContent = msg;
-        ticker.style.color = "var(--orange)";
+        const geoMsg = el("geo_message");
+        if (err.code === 1) {
+          geoMsg.textContent = "כדי להעריך את הסיכוי שתתפוס אתכם אזעקה באמצע המקלחת אנחנו צריכים לדעת איפה אתם. אנא אשרו גישה למיקום (או בחרו ידנית)";
+        } else {
+          geoMsg.textContent = "משהו השתבש עם הרדאר, כדאי לרענן את הדף.";
+        }
+        geoMsg.style.display = "";
         showManualFallback();
       }
 
@@ -1324,10 +1337,9 @@
       geoTimeout = setTimeout(() => {
         if (!state.locationReady && document.querySelector(".gauge-wrap.loading")) {
           stopTicker();
-          el("ticker_wrap").classList.remove("hidden");
-          el("ticker").textContent = "😅 הרדאר נתקע.";
-          el("ticker").style.color = "var(--orange)";
           document.querySelector(".gauge-wrap").className = "gauge-wrap loading error";
+          el("geo_message").textContent = "כדי להעריך את הסיכוי שתתפוס אתכם אזעקה באמצע המקלחת אנחנו צריכים לדעת איפה אתם. אנא אשרו גישה למיקום (או בחרו ידנית)";
+          el("geo_message").style.display = "";
           showManualFallback();
         }
       }, 25000);
