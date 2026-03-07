@@ -79,6 +79,12 @@ class AlertStore:
                 return (time.time() - a["timestamp"]) / 60
         return None
 
+    def get_last_alert_timestamp(self, areas: set[str]) -> Optional[float]:
+        for a in reversed(self._history):
+            if set(a["areas"]) & areas:
+                return a["timestamp"]
+        return None
+
     def is_currently_active(self, areas: set[str]) -> bool:
         for a in self._current_active:
             alert_areas = a.get("areas", a.get("data", []))

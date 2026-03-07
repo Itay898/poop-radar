@@ -348,11 +348,13 @@ def calculate_risk(areas: list[str], duration_min: int) -> PredictResponse:
     trend = _compute_trend(areas_set, total_risk)
 
     minutes_since = store.get_minutes_since_last_alert(areas_set)
+    last_alert_ts = store.get_last_alert_timestamp(areas_set)
 
     return PredictResponse(
         risk=round(total_risk, 4),
         level=level,
         minutesSinceLastAlert=int(minutes_since) if minutes_since is not None else None,
+        lastAlertTimestamp=last_alert_ts,
         salvoCount=store.get_salvo_count(areas_set),
         trend=trend,
         reasonings=modules,

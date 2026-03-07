@@ -20,6 +20,7 @@ class PredictResponse(BaseModel):
     risk: float
     level: str
     minutesSinceLastAlert: Optional[int]
+    lastAlertTimestamp: Optional[float]
     salvoCount: int
     trend: str
     reasonings: list[Reasoning]

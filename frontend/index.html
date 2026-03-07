@@ -878,6 +878,7 @@
     function processApiResponse(data) {
       const total = clamp(Math.round(data.risk * 100), 0, 100);
       const isActiveNow = data.minutesSinceLastAlert !== null && data.minutesSinceLastAlert < 1.5;
+      const lastAlertTimestamp = data.lastAlertTimestamp || null;
       const factors = (data.reasonings || [])
         .sort((a, b) => b.contribution - a.contribution)
         .map(r => ({
@@ -895,7 +896,7 @@
         else if (diff <= -8) trend = "falling";
       }
       previousScore = total;
-      return { total, factors, trend, isActiveNow, raw: data };
+      return { total, factors, trend, isActiveNow, lastAlertTimestamp, raw: data };
     }
 
     function getTheme(score) {
@@ -960,7 +961,7 @@
           if ("vibrate" in navigator) navigator.vibrate([500, 200, 500, 200, 500]);
           playSiren();
           if (document.hidden) sendNotification("צבע אדום באזורך!", `כניסה למרחב מוגן עכשיו! (${state.areas.join(", ")})`);
-          startShelterCountdown();
+          startShelterCountdown(alertData.lastAlertTimestamp);
         }
       } else if (state.activeAlert) {
         state.activeAlert = false;
@@ -971,11 +972,12 @@
       }
     }
 
-    function startShelterCountdown() {
-      const startTime = Date.now(), totalMs = state.etaSec * 1000;
+    function startShelterCountdown(alertTimestamp) {
+      const alertTimeMs = alertTimestamp ? alertTimestamp * 1000 : Date.now();
+      const deadlineMs = alertTimeMs + state.etaSec * 1000;
       clearInterval(state.shelterCountdownInterval);
       function tick() {
-        const secs = Math.ceil(Math.max(0, totalMs - (Date.now() - startTime)) / 1000);
+        const secs = Math.ceil(Math.max(0, deadlineMs - Date.now()) / 1000);
         el("shelter_countdown").textContent = secs > 0 ? `${secs} שניות להגיע למרחב מוגן` : "כניסה למרחב מוגן!";
         if (secs <= 0) clearInterval(state.shelterCountdownInterval);
       }
@@ -1065,7 +1067,7 @@
           el("change_location_link").classList.add("visible");
         }
 
-        showAlertBanner({ isActiveNow: result.isActiveNow });
+        showAlertBanner({ isActiveNow: result.isActiveNow, lastAlertTimestamp: result.lastAlertTimestamp });
 
         // Animate score
         animateScore(currentScore, result.total);
