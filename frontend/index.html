@@ -1230,56 +1230,70 @@
         gaugeWrap.className = "gauge-wrap loading scanning";
       }
 
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          clearTimeout(geoTimeout); // Cancel fallback since we got location
-          if (!hasPermission) {
-            gaugeWrap.className = "gauge-wrap loading scanning";
-            el("ticker").style.color = "var(--text-dim)";
-            startTicker(); // Resume the funny texts
-          }
+      async function onGeoSuccess(pos) {
+        clearTimeout(geoTimeout);
+        if (!hasPermission) {
+          gaugeWrap.className = "gauge-wrap loading scanning";
+          el("ticker").style.color = "var(--text-dim)";
+          startTicker();
+        }
 
-          try {
-            const resp = await fetch(`${API}/locate?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
-            const data = await resp.json();
-            if (data.areas?.length) {
-              state.areas = data.areas.slice(0, 5);
-              state.selectedCity = data.nearest.name;
-              state.locationReady = true;
-              if (data.migun_time != null) state.etaSec = data.migun_time;
-              const n = data.nearest;
-              el("loc_text").innerHTML = `<span class="loc-name">${n.name}</span><span class="loc-dot">·</span><span class="loc-dist">${formatMigunTime(state.etaSec)} להגיע למרחב מוגן</span>`;
-              el("loc_pin").style.display = "";
-              updateConnectionStatus();
-              await updateDashboard();
+        try {
+          const resp = await fetch(`${API}/locate?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+          const data = await resp.json();
+          if (data.areas?.length) {
+            state.areas = data.areas.slice(0, 5);
+            state.selectedCity = data.nearest.name;
+            state.locationReady = true;
+            if (data.migun_time != null) state.etaSec = data.migun_time;
+            const n = data.nearest;
+            el("loc_text").innerHTML = `<span class="loc-name">${n.name}</span><span class="loc-dot">·</span><span class="loc-dist">${formatMigunTime(state.etaSec)} להגיע למרחב מוגן</span>`;
+            el("loc_pin").style.display = "";
+            updateConnectionStatus();
+            await updateDashboard();
 
-              if (state.updateDashboardInterval) clearInterval(state.updateDashboardInterval);
-              state.updateDashboardInterval = setInterval(updateDashboard, 30000);
-            } else {
-              el("loc_text").textContent = "לא מצאנו אזורי התרעה באזור שלך";
-              gaugeWrap.className = "gauge-wrap loading error";
-            }
-          } catch (e) {
-            console.warn("Locate failed:", e);
-            el("loc_text").textContent = "מתקשים לאתר אותך...";
-            state.lastFetchOk = false;
+            if (state.updateDashboardInterval) clearInterval(state.updateDashboardInterval);
+            state.updateDashboardInterval = setInterval(updateDashboard, 30000);
+          } else {
+            el("loc_text").textContent = "לא מצאנו אזורי התרעה באזור שלך";
             gaugeWrap.className = "gauge-wrap loading error";
-            showManualFallback();
           }
-        },
-        (err) => {
-          clearTimeout(geoTimeout); // Cancel fallback timer
-          stopTicker();
-          const wrap = el("ticker_wrap");
-          const ticker = el("ticker");
+        } catch (e) {
+          console.warn("Locate failed:", e);
+          el("loc_text").textContent = "מתקשים לאתר אותך...";
+          state.lastFetchOk = false;
           gaugeWrap.className = "gauge-wrap loading error";
-          wrap.classList.remove("hidden");
-          const msg = err.code === 1 ? "בלי מיקום, איך נדע מתי להוציא אתכם מהמקלחת? נא לאשר גישה." : "משהו השתבש עם הרדאר, כדאי לרענן את הדף.";
-          ticker.textContent = msg;
-          ticker.style.color = "var(--orange)";
           showManualFallback();
-        },
-        { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 }
+        }
+      }
+
+      function onGeoError(err) {
+        // If high accuracy failed, retry without it (helps on iOS)
+        if (err.code !== 1 && !state._triedLowAccuracy) {
+          state._triedLowAccuracy = true;
+          navigator.geolocation.getCurrentPosition(onGeoSuccess, onGeoFinalError,
+            { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+          );
+          return;
+        }
+        onGeoFinalError(err);
+      }
+
+      function onGeoFinalError(err) {
+        clearTimeout(geoTimeout);
+        stopTicker();
+        const wrap = el("ticker_wrap");
+        const ticker = el("ticker");
+        gaugeWrap.className = "gauge-wrap loading error";
+        wrap.classList.remove("hidden");
+        const msg = err.code === 1 ? "בלי מיקום, איך נדע מתי להוציא אתכם מהמקלחת? נא לאשר גישה." : "משהו השתבש עם הרדאר, כדאי לרענן את הדף.";
+        ticker.textContent = msg;
+        ticker.style.color = "var(--orange)";
+        showManualFallback();
+      }
+
+      navigator.geolocation.getCurrentPosition(onGeoSuccess, onGeoError,
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
       );
     }
 
