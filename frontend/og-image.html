@@ -10,8 +10,8 @@
       height: 630px;
       overflow: hidden;
       font-family: 'Rubik', sans-serif;
-      background: #0b1121;
-      color: #f8fafc;
+      background: #1a0f05;
+      color: #fef3e2;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -30,7 +30,7 @@
     }
     .header .tagline {
       font-weight: 400;
-      color: #94a3b8;
+      color: #a08060;
     }
 
     /* Main area */
@@ -68,7 +68,7 @@
       font-size: 90px;
       font-weight: 900;
       line-height: 1;
-      color: #f8fafc;
+      color: #fef3e2;
       direction: ltr;
     }
     .gauge-score .pct {
@@ -79,7 +79,7 @@
     }
     .gauge-score .label {
       font-size: 16px;
-      color: #94a3b8;
+      color: #a08060;
       margin-top: 6px;
       text-align: center;
       line-height: 1.4;
@@ -97,13 +97,13 @@
       font-size: 26px;
       font-weight: 700;
       line-height: 1.5;
-      color: #f8fafc;
+      color: #fef3e2;
     }
     .reco .highlight {
       color: #10b981;
     }
 
-    /* Shower selector */
+    /* Selector */
     .shower-selector {
       display: flex;
       width: 420px;
@@ -121,13 +121,13 @@
       text-align: center;
       gap: 4px;
       padding: 12px 8px;
-      color: #64748b;
+      color: #a08060;
       border-left: 1px solid rgba(255,255,255,0.08);
     }
     .shower-opt:first-child { border-left: none; }
     .shower-opt.active {
-      background: #10b981;
-      color: #0b1121;
+      background: #a0622e;
+      color: #fef3e2;
     }
     .shower-opt-label { font-size: 16px; font-weight: 700; }
     .shower-opt-sub { font-size: 13px; opacity: 0.7; }
@@ -139,7 +139,7 @@
       width: 100%;
       text-align: center;
       font-size: 16px;
-      color: #475569;
+      color: #a08060;
       direction: ltr;
     }
   </style>
@@ -147,7 +147,7 @@
 <body>
 
   <div class="header">
-    🚿 סיבון העורף <span class="tagline">· אפשר להתקלח? בדקו וגלו!</span>
+    💩 Can I Poop? <span class="tagline">· בטוח לשבת על האסלה עכשיו?</span>
   </div>
 
   <div class="main">
@@ -160,31 +160,31 @@
       </svg>
       <div class="gauge-score">
         <div><span class="num">20</span><span class="pct">%</span></div>
-        <div class="label">סיכוי לאזעקה<br>בזמן המקלחת</div>
+        <div class="label">סיכוי שתיתפסו על<br>האסלה באזעקה</div>
       </div>
     </div>
 
     <div class="reco">
-      🛁 <span class="highlight">אור ירוק למקלחת.</span> הסיכוי לאזעקה נמוך –<br>אפשר להתפנק ברוגע, כולל קונדישנר.
+      🧻 <span class="highlight">חרבנו בכייף, חרבנו בנחת.</span><br>הסכנה היחידה כרגע היא מה שאתם הולכים לעשות לאסלה הזאת.
     </div>
 
     <div class="shower-selector">
-      <button class="shower-opt" data-duration="5">
-        <span class="shower-opt-label">מטכ״לית</span>
+      <button class="shower-opt" data-duration="2">
+        <span class="shower-opt-label">✨ קקי קסם</span>
+        <span class="shower-opt-sub">2 דק׳</span>
+      </button>
+      <button class="shower-opt active" data-duration="5">
+        <span class="shower-opt-label">💩 סטנדרט</span>
         <span class="shower-opt-sub">5 דק׳</span>
       </button>
-      <button class="shower-opt active" data-duration="10">
-        <span class="shower-opt-label">רגילה</span>
-        <span class="shower-opt-sub">10 דק׳</span>
-      </button>
-      <button class="shower-opt" data-duration="20">
-        <span class="shower-opt-label">Everything Shower</span>
-        <span class="shower-opt-sub">20 דק׳</span>
+      <button class="shower-opt" data-duration="15">
+        <span class="shower-opt-label">💀 חרפלוץ</span>
+        <span class="shower-opt-sub">15 דק׳</span>
       </button>
     </div>
   </div>
 
-  <div class="bottom-bar">SibunHaoref.com</div>
+  <div class="bottom-bar">CanIPoop.com</div>
 
 </body>
 </html>
