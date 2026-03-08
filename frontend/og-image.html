@@ -15,130 +15,32 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+      gap: 32px;
       position: relative;
+    }
+    .emoji {
+      font-size: 120px;
+      line-height: 1;
+    }
+    .title-en {
+      font-size: 72px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      direction: ltr;
+    }
+    .title-he {
+      font-size: 42px;
+      font-weight: 700;
+      color: #a08060;
       direction: rtl;
     }
-
-    /* Header */
-    .header {
-      width: 100%;
-      text-align: center;
-      padding: 28px 0 0;
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-    .header .tagline {
-      font-weight: 400;
-      color: #a08060;
-    }
-
-    /* Main area */
-    .main {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1;
-      justify-content: center;
-      gap: 20px;
-      margin-top: -14px;
-    }
-
-    /* Gauge */
-    .gauge-area {
-      position: relative;
-      width: 300px;
-      height: 300px;
-    }
-    .gauge-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-    .gauge-svg circle { fill: none; stroke-linecap: round; }
-    .gauge-svg .track { stroke: rgba(255,255,255,0.06); stroke-width: 10; }
-    .gauge-svg .progress { stroke: #10b981; stroke-width: 10; stroke-dasharray: 691; stroke-dashoffset: 553; }
-    .gauge-svg .progress-glow { stroke: #10b981; stroke-width: 18; stroke-dasharray: 691; stroke-dashoffset: 553; opacity: 0.15; filter: blur(4px); }
-
-    .gauge-score {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    .gauge-score .num {
-      font-size: 90px;
-      font-weight: 900;
-      line-height: 1;
-      color: #fef3e2;
-      direction: ltr;
-    }
-    .gauge-score .pct {
-      font-size: 36px;
-      font-weight: 700;
-      color: #10b981;
-      direction: ltr;
-    }
-    .gauge-score .label {
-      font-size: 16px;
-      color: #a08060;
-      margin-top: 6px;
-      text-align: center;
-      line-height: 1.4;
-    }
-    .gauge-glow {
-      position: absolute;
-      inset: -20px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.12), transparent 70%);
-    }
-
-    /* Reco text */
-    .reco {
-      text-align: center;
-      font-size: 26px;
-      font-weight: 700;
-      line-height: 1.5;
-      color: #fef3e2;
-    }
-    .reco .highlight {
-      color: #10b981;
-    }
-
-    /* Selector */
-    .shower-selector {
-      display: flex;
-      width: 420px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 14px;
-      overflow: hidden;
-    }
-    .shower-opt {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 4px;
-      padding: 12px 8px;
-      color: #a08060;
-      border-left: 1px solid rgba(255,255,255,0.08);
-    }
-    .shower-opt:first-child { border-left: none; }
-    .shower-opt.active {
-      background: #a0622e;
-      color: #fef3e2;
-    }
-    .shower-opt-label { font-size: 16px; font-weight: 700; }
-    .shower-opt-sub { font-size: 13px; opacity: 0.7; }
-
-    /* Bottom */
     .bottom-bar {
       position: absolute;
-      bottom: 20px;
+      bottom: 24px;
       width: 100%;
       text-align: center;
-      font-size: 16px;
+      font-size: 18px;
       color: #a08060;
       direction: ltr;
     }
@@ -146,45 +48,10 @@
 </head>
 <body>
 
-  <div class="header">
-    💩 Can I Poop? <span class="tagline">· בטוח לשבת על האסלה עכשיו?</span>
-  </div>
-
-  <div class="main">
-    <div class="gauge-area">
-      <div class="gauge-glow"></div>
-      <svg class="gauge-svg" viewBox="0 0 240 240">
-        <circle class="track" cx="120" cy="120" r="110"></circle>
-        <circle class="progress-glow" cx="120" cy="120" r="110"></circle>
-        <circle class="progress" cx="120" cy="120" r="110"></circle>
-      </svg>
-      <div class="gauge-score">
-        <div><span class="num">20</span><span class="pct">%</span></div>
-        <div class="label">סיכוי שתיתפסו על<br>האסלה באזעקה</div>
-      </div>
-    </div>
-
-    <div class="reco">
-      🧻 <span class="highlight">חרבנו בכייף, חרבנו בנחת.</span><br>הסכנה היחידה כרגע היא מה שאתם הולכים לעשות לאסלה הזאת.
-    </div>
-
-    <div class="shower-selector">
-      <button class="shower-opt" data-duration="2">
-        <span class="shower-opt-label">✨ קקי קסם</span>
-        <span class="shower-opt-sub">2 דק׳</span>
-      </button>
-      <button class="shower-opt active" data-duration="5">
-        <span class="shower-opt-label">💩 סטנדרט</span>
-        <span class="shower-opt-sub">5 דק׳</span>
-      </button>
-      <button class="shower-opt" data-duration="15">
-        <span class="shower-opt-label">💀 חרפלוץ</span>
-        <span class="shower-opt-sub">15 דק׳</span>
-      </button>
-    </div>
-  </div>
-
-  <div class="bottom-bar">CanIPoop.com</div>
+  <div class="emoji">💩</div>
+  <div class="title-en">Can I Poop?</div>
+  <div class="title-he">אפשר לעשות קקי?</div>
+  <div class="bottom-bar">canipoop.com</div>
 
 </body>
 </html>
