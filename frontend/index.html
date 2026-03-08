@@ -576,7 +576,7 @@
         <span id="footer_credit_text">נבנה בין אזעקה לאזעקה ע״י</span> <a href="https://www.linkedin.com/in/itay-amar/" target="_blank" rel="noopener noreferrer">איתי עמר</a>
       </div>
       <div class="footer-disclaimer" style="opacity:0.6;">
-        נתונים: <a href="https://www.oref.org.il/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;">פיקוד העורף</a> &middot; <a href="https://rocketalert.live/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;">RocketAlert</a> &middot; <a href="https://www.tzevaadom.co.il/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;">צבע אדום</a>
+        <span id="footer_data_label">נתונים:</span> <a href="https://www.oref.org.il/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" id="footer_oref_link">פיקוד העורף</a> &middot; <a href="https://rocketalert.live/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;">RocketAlert</a> &middot; <a href="https://www.tzevaadom.co.il/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" id="footer_tzeva_link">צבע אדום</a>
       </div>
       <div class="footer-disclaimer" id="footer_update_time" style="opacity:0.5;"></div>
       <div class="footer-disclaimer">
@@ -644,6 +644,10 @@
         footerDisclaimer: "* לא חוזים אזעקות – רק מחשבים סיכויים. תמיד היכנסו למרחב מוגן כשיש אזעקה, גם אם אתם באמצע עסקה חשובה.",
         footerShower: "🚿 מעדיפים מקלחת?",
         footerShowerLink: "סיבון העורף",
+        footerDataLabel: "נתונים:",
+        footerOrefLink: "פיקוד העורף",
+        footerTzevaLink: "צבע אדום",
+        updatedAt: (time) => "עודכן " + time,
         trendStable: "&#9472; יציב", trendRising: "&#9650; עולה", trendFalling: "&#9660; יורד",
         themes: [
           { max: 20, headline: "🧻 חרבנו בכייף, חרבנו בנחת.", detail: "הסכנה היחידה כרגע היא מה שאתם הולכים לעשות לאסלה הזאת.", pill: "בטוח לשבת" },
@@ -674,6 +678,10 @@
         footerDisclaimer: "* We don't predict alerts – just calculate odds. Always get to shelter when there's an alert, even mid-business.",
         footerShower: "🚿 Prefer a shower?",
         footerShowerLink: "Sibun HaOref",
+        footerDataLabel: "Data:",
+        footerOrefLink: "IDF Home Front Command",
+        footerTzevaLink: "Tzeva Adom",
+        updatedAt: (time) => "Updated " + time,
         trendStable: "&#9472; Stable", trendRising: "&#9650; Rising", trendFalling: "&#9660; Falling",
         themes: [
           { max: 20, headline: "🧻 Sit back and relax.", detail: "The only danger right now is what you're about to do to that toilet.", pill: "Safe to sit" },
@@ -723,6 +731,9 @@
       el("footer_disclaimer_text").textContent = t.footerDisclaimer;
       el("footer_shower_text").textContent = t.footerShower;
       el("footer_shower_link").textContent = t.footerShowerLink;
+      el("footer_data_label").textContent = t.footerDataLabel;
+      el("footer_oref_link").textContent = t.footerOrefLink;
+      el("footer_tzeva_link").textContent = t.footerTzevaLink;
     }
 
     el("lang_toggle").addEventListener("click", () => {
@@ -1004,7 +1015,8 @@
 
         // Footer update time
         const _now = new Date();
-        el("footer_update_time").textContent = "עודכן " + _now.toLocaleTimeString("he-IL", {hour: '2-digit', minute:'2-digit'});
+        const timeStr = _now.toLocaleTimeString(state.lang === "he" ? "he-IL" : "en-US", {hour: '2-digit', minute:'2-digit'});
+        el("footer_update_time").textContent = i18n[state.lang].updatedAt(timeStr);
 
         // Recommendation card with colored background
         el("reco_card").style.background = theme.bg;
