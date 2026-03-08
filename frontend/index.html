@@ -573,7 +573,7 @@
     <!-- Footer -->
     <footer class="site-footer">
       <div class="footer-credit">
-        <span id="footer_credit_text">נבנה בין אזעקה לאזעקה ע״י</span> <a href="https://www.linkedin.com/in/itay-amar/" target="_blank" rel="noopener noreferrer">איתי עמר</a>
+        <span id="footer_credit_text">נבנה בין אזעקה לאזעקה ע״י</span> <a href="https://www.linkedin.com/in/itay-amar/" target="_blank" rel="noopener noreferrer" id="footer_author_link">איתי עמר</a>
       </div>
       <div class="footer-disclaimer" style="opacity:0.6;">
         <span id="footer_data_label">נתונים:</span> <a href="https://www.oref.org.il/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" id="footer_oref_link">פיקוד העורף</a> &middot; <a href="https://rocketalert.live/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;">RocketAlert</a> &middot; <a href="https://www.tzevaadom.co.il/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" id="footer_tzeva_link">צבע אדום</a>
@@ -641,6 +641,7 @@
         chooserTitle: "בחר אזור",
         searchPlaceholder: "חיפוש אזור...",
         footerCredit: "נבנה בין אזעקה לאזעקה ע״י",
+        footerAuthor: "איתי עמר",
         footerDisclaimer: "* לא חוזים אזעקות – רק מחשבים סיכויים. תמיד היכנסו למרחב מוגן כשיש אזעקה, גם אם אתם באמצע עסקה חשובה.",
         footerShower: "🚿 מעדיפים מקלחת?",
         footerShowerLink: "סיבון העורף",
@@ -675,6 +676,7 @@
         chooserTitle: "Choose area",
         searchPlaceholder: "Search area...",
         footerCredit: "Built between sirens by",
+        footerAuthor: "Itay Amar",
         footerDisclaimer: "* We don't predict alerts – just calculate odds. Always get to shelter when there's an alert, even mid-business.",
         footerShower: "🚿 Prefer a shower?",
         footerShowerLink: "Sibun HaOref",
@@ -731,6 +733,7 @@
       el("footer_disclaimer_text").textContent = t.footerDisclaimer;
       el("footer_shower_text").textContent = t.footerShower;
       el("footer_shower_link").textContent = t.footerShowerLink;
+      el("footer_author_link").textContent = t.footerAuthor;
       el("footer_data_label").textContent = t.footerDataLabel;
       el("footer_oref_link").textContent = t.footerOrefLink;
       el("footer_tzeva_link").textContent = t.footerTzevaLink;
