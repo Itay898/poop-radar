@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sibunhaoref.com/sitemap.xml
+Sitemap: https://canipoop.com/sitemap.xml
