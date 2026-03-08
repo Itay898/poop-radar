@@ -270,6 +270,18 @@
     .shower-opt.active .radio::after { background: var(--accent); }
     .shower-opt-text { display: flex; align-items: baseline; gap: 8px; font-size: 16px; font-weight: 600; }
     .shower-opt-sub { font-size: 14px; opacity: 0.6; font-weight: 400; }
+    .custom-duration { display: none; width: 100%; padding: 0 18px 16px; }
+    .shower-opt.active + .custom-duration-wrap .custom-duration { display: block; }
+    .custom-slider-row { display: flex; align-items: center; gap: 12px; }
+    .custom-slider-row input[type="range"] {
+      flex: 1; -webkit-appearance: none; appearance: none;
+      height: 6px; border-radius: 3px; background: rgba(255,255,255,0.12); outline: none;
+    }
+    .custom-slider-row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent); cursor: pointer;
+    }
+    .custom-slider-val { font-size: 16px; font-weight: 700; color: var(--text); min-width: 52px; text-align: center; }
 
     /* ── Location Card ── */
     .loc-card {
@@ -493,6 +505,16 @@
         <span class="radio"></span>
         <span class="shower-opt-text">💀 חרפלוץ <span class="shower-opt-sub">(15 דק׳)</span></span>
       </button>
+      <button class="shower-opt" data-duration="custom" id="custom_duration_btn">
+        <span class="radio"></span>
+        <span class="shower-opt-text">⏱️ מותאם אישית <span class="shower-opt-sub" id="custom_duration_label">(10 דק׳)</span></span>
+      </button>
+      <div class="custom-duration" id="custom_duration_slider">
+        <div class="custom-slider-row">
+          <input type="range" id="custom_range" min="1" max="30" value="10" step="1">
+          <span class="custom-slider-val" id="custom_range_val">10 דק׳</span>
+        </div>
+      </div>
     </div>
 
     <!-- Location card -->
@@ -1063,13 +1085,32 @@
     });
 
     // Shower type selector
+    const customSlider = el("custom_duration_slider");
+    const customRange = el("custom_range");
+    const customRangeVal = el("custom_range_val");
+    const customLabel = el("custom_duration_label");
+
     document.querySelectorAll('.shower-opt').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.shower-opt').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        state.duration = parseInt(btn.dataset.duration, 10);
+        if (btn.dataset.duration === 'custom') {
+          customSlider.style.display = 'block';
+          state.duration = parseInt(customRange.value, 10);
+        } else {
+          customSlider.style.display = 'none';
+          state.duration = parseInt(btn.dataset.duration, 10);
+        }
         updateDashboard();
       });
+    });
+
+    customRange.addEventListener('input', () => {
+      const v = customRange.value;
+      customRangeVal.textContent = v + ' דק׳';
+      customLabel.textContent = '(' + v + ' דק׳)';
+      state.duration = parseInt(v, 10);
+      updateDashboard();
     });
 
     // Timeout fallback: started only after autoLocate() is triggered
