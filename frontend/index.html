@@ -1200,9 +1200,7 @@
       if (navigator.share) {
         try {
           await navigator.share({
-            title: 'סיבון העורף 🚿',
-            text: `בדקתי אם בטוח להתקלח עכשיו – הסיכוי לאזעקה: ${currentScore}%\nסיבון העורף קובע: ${state.currentRiskText}`,
-            url: window.location.href
+            text: `🚿 הסיכוי לאזעקה באמצע המקלחת: ${currentScore}% – ${state.currentRiskText}\nhttps://sibunhaoref.com`
           });
         } catch (err) { console.log("Share cancelled", err); }
       }
