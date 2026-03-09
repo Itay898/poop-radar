@@ -718,7 +718,7 @@
       opts.forEach((btn, i) => {
         if (durKeys[i]) {
           const textEl = btn.querySelector('.shower-opt-text');
-          const subText = durMins[i] ? `(${durMins[i]} ${t.minAbbr})` : el("custom_duration_label").textContent;
+          const subText = durMins[i] ? `(${durMins[i]} ${t.minAbbr})` : `(${el("custom_range").value} ${t.minAbbr})`;
           if (textEl) textEl.innerHTML = t[durKeys[i]] + ' <span class="shower-opt-sub"' + (durKeys[i] === 'durCustom' ? ' id="custom_duration_label"' : '') + '>' + subText + '</span>';
         }
       });
