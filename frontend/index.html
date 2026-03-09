@@ -632,6 +632,7 @@
         manualFallback: "בחירת אזור ידנית",
         selectorLabel: "סוג הישיבה",
         dur2: "✨ קקי קסם", dur5: "💩 סטנדרט", dur15: "💀 חרפלוץ", durCustom: "⏱️ מותאם אישית",
+        minAbbr: "דק׳", secLabel: "שניות", minLabel: "דקות", minOne: "דקה", minHalf: "דקה וחצי",
         changeLoc: "שינוי",
         shareLabel: "שתפו עם חברים קקות",
         shareText: (score) => `💩 יש לי ${score}% סיכוי להיתפס על האסלה באזעקה. מה איתך?\nhttps://canipoop.com`,
@@ -667,6 +668,7 @@
         manualFallback: "Choose area manually",
         selectorLabel: "Session type",
         dur2: "✨ Quick Drop", dur5: "💩 Standard", dur15: "💀 Mega Session", durCustom: "⏱️ Custom",
+        minAbbr: "min", secLabel: "seconds", minLabel: "minutes", minOne: "1 minute", minHalf: "1.5 minutes",
         changeLoc: "Change",
         shareLabel: "Share with friends",
         shareText: (score) => `💩 I have a ${score}% chance of getting caught on the toilet during a rocket alert. What about you?\nhttps://canipoop.com`,
@@ -712,14 +714,15 @@
       // Duration options
       const opts = document.querySelectorAll('.shower-opt');
       const durKeys = ['dur2', 'dur5', 'dur15', 'durCustom'];
+      const durMins = [2, 5, 15, null];
       opts.forEach((btn, i) => {
         if (durKeys[i]) {
           const textEl = btn.querySelector('.shower-opt-text');
-          const subEl = btn.querySelector('.shower-opt-sub');
-          const subText = subEl ? subEl.textContent : '';
-          if (textEl) textEl.innerHTML = t[durKeys[i]] + ' <span class="shower-opt-sub">' + subText + '</span>';
+          const subText = durMins[i] ? `(${durMins[i]} ${t.minAbbr})` : el("custom_duration_label").textContent;
+          if (textEl) textEl.innerHTML = t[durKeys[i]] + ' <span class="shower-opt-sub"' + (durKeys[i] === 'durCustom' ? ' id="custom_duration_label"' : '') + '>' + subText + '</span>';
         }
       });
+      el("custom_range_val").textContent = el("custom_range").value + ' ' + t.minAbbr;
 
       el("change_loc_text").textContent = t.changeLoc;
       el("share_label").textContent = t.shareLabel;
@@ -781,12 +784,13 @@
 
     // --- Helpers ---
     function formatMigunTime(secs) {
-      if (secs <= 30) return `${secs} שניות`;
-      if (secs === 45) return '45 שניות';
-      if (secs === 60) return 'דקה';
-      if (secs === 90) return 'דקה וחצי';
-      if (secs % 60 === 0) return `${secs / 60} דקות`;
-      return `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2,'0')} דקות`;
+      const t = i18n[state.lang];
+      if (secs <= 30) return `${secs} ${t.secLabel}`;
+      if (secs === 45) return `45 ${t.secLabel}`;
+      if (secs === 60) return t.minOne;
+      if (secs === 90) return t.minHalf;
+      if (secs % 60 === 0) return `${secs / 60} ${t.minLabel}`;
+      return `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2,'0')} ${t.minLabel}`;
     }
 
     // --- Data Processing ---
@@ -1263,8 +1267,8 @@
 
     customRange.addEventListener('input', () => {
       const v = customRange.value;
-      customRangeVal.textContent = v + ' דק׳';
-      customLabel.textContent = '(' + v + ' דק׳)';
+      customRangeVal.textContent = v + ' ' + i18n[state.lang].minAbbr;
+      customLabel.textContent = '(' + v + ' ' + i18n[state.lang].minAbbr + ')';
       state.duration = parseInt(v, 10);
       updateDashboard();
     });
