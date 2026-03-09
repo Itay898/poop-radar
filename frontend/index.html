@@ -742,6 +742,7 @@
 
     el("lang_toggle").addEventListener("click", () => {
       state.lang = state.lang === "he" ? "en" : "he";
+      gtag("event", "language_switch", { language: state.lang });
       localStorage.setItem("poop_lang", state.lang);
       applyLang();
       if (state.locationReady) updateDashboard();
@@ -1262,6 +1263,7 @@
           customSlider.style.display = 'none';
           state.duration = parseInt(btn.dataset.duration, 10);
         }
+        gtag("event", "select_duration", { duration: state.duration });
         updateDashboard();
       });
     });
@@ -1310,6 +1312,7 @@
       }
 
       async function selectManualArea(name) {
+        gtag("event", "select_location", { location: name });
         state.areas = [name];
         state.selectedCity = name;
         state.locationReady = true;
