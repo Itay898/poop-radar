@@ -248,7 +248,7 @@
 
     /* ── Section Label ── */
     .section-label {
-      width: 100%; text-align: right;
+      width: 100%; text-align: start;
       font-size: 14px; font-weight: 600; color: var(--text-dim);
       margin-bottom: 10px;
     }
@@ -1121,6 +1121,7 @@
 
     // Share Action
     el("share_btn").addEventListener("click", async () => {
+      gtag("event", "share", { method: "web_share_api", content_type: "score", item_id: currentScore });
       if (navigator.share) {
         try {
           await navigator.share({
@@ -1330,7 +1331,6 @@
         el('loc_pin').style.display = "flex";
         el('change_location_link').classList.add('visible');
         await updateDashboard();
-        updateStats();
         if (state.updateDashboardInterval) clearInterval(state.updateDashboardInterval);
         state.updateDashboardInterval = setInterval(updateDashboard, 30000);
       }
